@@ -112,7 +112,7 @@ with col2:
 with col3:
     st.image("images/signal_normalized.png", use_container_width=True)
 with col4:
-    st.image("images\signal_sav_golay.png", use_container_width=True)
+    st.image("images/signal_sav_golay.png", use_container_width=True)
 
 st.write("""
 #### Mid-level fusion
