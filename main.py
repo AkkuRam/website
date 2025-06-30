@@ -85,7 +85,7 @@ with col2:
     st.image("images/borderlinesmote.png", use_container_width=True)
 
 st.write("""
-Now with BorderlineSMOTE, the left image below represents the imbalanced classes, where the right image represents the oversampled classes.
+Now with BorderlineSMOTE, the first image below represents the imbalanced classes, where the second image represents the oversampled classes.
 """)
 
 col1, col2 = st.columns(2)
@@ -99,7 +99,7 @@ These images represent the preprocessing steps of the signal. For 7 plastic type
 In addition, once the signals are preprocessed, if for each plastic type the samples are averaged, it should represent a distinct signal for each 
 plastic type, which makes it identifiable which plastic type is which signal. 
 
-Referring to the images below, the first image from the left are the signals after being oversampled. There is clear background noise,
+Referring to the images below, the first image represents the signals after being oversampled. There is clear background noise,
 therefore baseline correction is applied to isolate the peaks and flatten out the noise by using a quadratic polynomial (image 2). Hereafter, normalization is applied to bring them in a standard scale (image 3). Then the final step is to apply a Savitzky-Golay filter,
 which mainly smoothens out the signal (image 4). 
 """)
@@ -162,16 +162,44 @@ $$
 - $p(e|h_g)$ is the likelihood estimate of the conditional probability that evidence e is observed
 given that hypothesis $h_g$ is true
 - $p(h_g)$ is the prior probability that hypothesis $h_g$ is true
+         
+Example:
+     
+""")
 
-For our case we calculate for each class (1 vs Rest), therefore this is a $2 \\times 2$ confusion matrix,
-hence our prior probabilities are initialized to $[0.5, 0.5]$, essentially random. The models used for combining the outputs 
-are RF, Decision Tree, XGBoost, Logistic Regression, SVM, KNN. The main crux of bayesian consensus is that, in each iteration
+data = {
+    "Model C": ["True A", "True B"],
+    "Predicted A": [127, 12],
+    "Predicted B": [19, 60],
+    "Likelihood A": [0.87, 0.17],
+    "Likelihood B": [0.13, 0.83]
+}
+df = pd.DataFrame(data)
+
+st.table(df)
+
+st.write("""
+$$
+p(h_A|A) = \\frac{0.87 \cdot 0.50}{0.17 \cdot 0.5 + 0.97 \cdot 0.5} = 0.84   
+$$
+$$
+p(h_B|A) = 1 - 0.84 = 0.16  
+$$
+""")
+
+st.write("""
+
+For the above example, our prior probabilities are represented by 0.5, as seen with our confusion matrices which is $2 \\times 2$,
+as in Predicted vs True labels, where with the likelhood probabilities. We can compute this formula for some Model C, then these outputs
+(0.84, 0.16) are provided as input to the next model.        
+
+The models used for combining the outputs are RF, Decision Tree, XGBoost, Logistic Regression, SVM, KNN. The main crux of bayesian consensus is that, in each iteration
 it gives out two probabilities, essentially for the label "yes" and "no". Since for 1 vs Rest, this becomes binary, so after iterating 
-for each class, we get as an output (two probabilites), where we choose the higher probability and this is accuracy 
+for each class, we get as the final output (two probabilites), where we choose the higher probability and this is accuracy 
 of predicting that class. 
 
-Key Takeaway: The choice of the yes/no labels which is done by us, heavily impacts the results/accuracy. The predicted labels, will
-be given by the model, the actual/true label we define, hence this definition by us impacts the result (i.e. bias).     
+Key Takeaway: The decision of the yes/no labels are chosen by us. As a result this is a bias, since the chosen labels can vary the results
+. The predicted labels will be given by the model and the actual/true label are defined by us.
 """)
 
 st.write("""
@@ -186,9 +214,33 @@ st.markdown("[Github: Spectroscopy](https://github.com/AkkuRam/df-project)")
 
 st.subheader("Neural Network (Individual)")
 st.write("""
-TODO!!!!!
+A neural network was written from scratch in Rust to predict the XOR operator. The basics of the XOR operator:
+- [0,0] = 0
+- [0,1] = 1
+- [1,0] = 1
+- [1,1] = 0
+
+The size of the network is as follows, the input layer consists of 2 nodes, with 1 hidden layer of 3 nodes and the output layer is 1 node.
+Therefore, in the input layer each node will be a binary value, then the hidden layer performs computations, then return the value in the output 
+layer. This is refined in forward and backpropagation to return a good estimate. For a basic task like XOR prediction, 1000 iterations with this
+small network size is sufficient to get the expected values, as seen with the result below:
+         
+[0,0] = 0.0068651423091961 (close to 0) \\
+[0,0] = 0.9137907231894812 (close to 1) \\
+[0,0] = 0.9126004464154855 (close to 1) \\
+[0,0] = 0.1082647074600035 (close to 0)
 """)
-st.markdown("[View Project](https://github.com/yourusername/project-two)")
+
+st.image("images/NN.png", use_container_width=True)
+
+st.write("""
+#### Future Work
+- Currently, this is a very basic neural network, since the task is to predict a XOR operator
+- Extend to predicting handwritten digits & build a small library so that it is adaptable to many different tasks
+""")
+
+
+st.markdown("[Github: Neural Network](https://github.com/AkkuRam/neural_net)")
 
 # Contact Section
 st.header("Contact")
